@@ -3,46 +3,36 @@ declare(strict_types=1);
 
 namespace Mlopez\Trm;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
+use SoapClient;
 
 class Trm
 {
     private const HOST ='https://www.superfinanciera.gov.co';
     private const WSDL = self::HOST.'/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService?wsdl';
 
-    public function call($date)
+    /**
+     * @throws \SoapFault
+     */
+    public function call(string $date): array
     {
-        $client = new Client();
+        try {
+            require_once 'lib/nusoap.php';
 
-        $headers = $this->header();
+            $date = $date ?? date('Y-m-d');
 
-        $body = $this->body($date);
+            $client = new soapclient(self::WSDL, [
+                'soap_version' => SOAP_1_1,
+                'trace' => 1,
+                'location' => self::HOST . '/SuperfinancieraWebServiceTRM/TCRMServicesWebService/TCRMServicesWebService',
+            ]);
 
-        $request = new Request('POST', self::WSDL, $headers, $body);
-        $res = $client->sendAsync($request)->wait();
+            $response = $client->queryTCRM(['tcrmQueryAssociatedDate' => $date]);
+            return get_object_vars($response->return);
 
-        $xml = $res->getBody()->getContents();
-
-        print_r($xml);
-    }
-
-    private function header(): array
-    {
-        return [
-            'Content-Type' => 'text/xml'
-        ];
-    }
-    private function body($date): string
-    {
-        return '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-                xmlns:act="http://action.trm.services.generic.action.superfinanciera.nexura.sc.com.co/">
-                <soapenv:Header/>
-                <soapenv:Body>
-                <act:queryTCRM>
-                <tcrmQueryAssociatedDate>'. $date .'</tcrmQueryAssociatedDate>
-                </act:queryTCRM>
-                </soapenv:Body>
-                </soapenv:Envelope>';
+        } catch (\SoapFault $e) {
+            return [
+                'error' => $e->getMessage()
+            ];
+        }
     }
 }
