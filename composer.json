@@ -23,7 +23,9 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.1.3"
+        "php": ">=7.1.3",
+        "guzzlehttp/guzzle": "7.9.x-dev",
+        "ext-simplexml": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0.19"
