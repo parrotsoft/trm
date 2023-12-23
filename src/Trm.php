@@ -13,7 +13,7 @@ class Trm
     /**
      * @throws \SoapFault
      */
-    public function call(string $date): array
+    public function call(? string $date = null): array
     {
         try {
             require_once 'lib/nusoap.php';
