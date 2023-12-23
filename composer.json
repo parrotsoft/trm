@@ -1,7 +1,7 @@
 {
     "name": "mlopez/trm",
-    "description": "TRM Colombia",
-    "keywords": ["trm", "colombia", "dolar", "peso", "colombiano"],
+    "description": "TRM Package for PHP - Colombia",
+    "keywords": ["trm", "colombia", "exchange rate", "currency"],
     "autor": [
         {
             "name": "Miguel Angel Lopez Ariza",
